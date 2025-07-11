@@ -131,7 +131,9 @@
         </label>
         <label>Categoria:<input type="text" id="categoria" required></label>
         <label>Descrição:<input type="text" id="descricao" required></label>
-        <label>Valor:<input type="number" id="valor" step="0.01" required></label>
+        <label>Quantidade:<input type="number" id="quantidade" step="1" required></label>
+        <label>Valor Unitário:<input type="number" id="valorUnitario" step="0.01" required></label>
+        <label>Valor Total:<input type="number" id="valorTotal" step="0.01" readonly></label>
         <label>Origem do recurso:
           <select id="origem">
             <option value="Próprio">Próprio</option>
@@ -162,7 +164,8 @@
         <thead>
           <tr>
             <th>Data</th><th>Tipo</th><th>Categoria</th><th>Descrição</th>
-            <th>Valor</th><th>Origem</th><th>Atendimento</th><th>Paciente</th><th>Usuário</th><th>Ação</th>
+            <th>Qtd</th><th>V. Unit</th><th>V. Total</th>
+            <th>Origem</th><th>Atendimento</th><th>Paciente</th><th>Usuário</th><th>Ação</th>
           </tr>
         </thead>
         <tbody></tbody>
@@ -205,6 +208,22 @@
     const tabela = document.querySelector('#tabela tbody');
     const filtroMes = document.getElementById('filtroMes');
     const filtroBusca = document.getElementById('filtroBusca');
+    const quantidade = document.getElementById('quantidade');
+    const valorUnitario = document.getElementById('valorUnitario');
+    const valorTotal = document.getElementById('valorTotal');
+
+    quantidade.addEventListener('input', calcularTotal);
+    valorUnitario.addEventListener('input', calcularTotal);
+
+    function calcularTotal() {
+      const qtd = parseFloat(quantidade.value);
+      const unit = parseFloat(valorUnitario.value);
+      if (!isNaN(qtd) && !isNaN(unit)) {
+        valorTotal.value = (qtd * unit).toFixed(2);
+      } else {
+        valorTotal.value = '';
+      }
+    }
 
     function salvarLocal() {
       localStorage.setItem('lancamentosCEBAS', tabela.innerHTML);
@@ -230,7 +249,9 @@
         <td>${tipo.value}</td>
         <td>${categoria.value}</td>
         <td>${descricao.value}</td>
-        <td>R$ ${parseFloat(valor.value).toFixed(2)}</td>
+        <td>${quantidade.value}</td>
+        <td>R$ ${parseFloat(valorUnitario.value).toFixed(2)}</td>
+        <td>R$ ${parseFloat(valorTotal.value).toFixed(2)}</td>
         <td>${origem.value}</td>
         <td>${atendimento.value}</td>
         <td>${paciente.value}</td>
@@ -267,8 +288,8 @@
       document.querySelectorAll('#tabela tbody tr').forEach(tr => {
         const data = tr.children[0].innerText;
         const categoria = tr.children[2].innerText.toLowerCase();
-        const paciente = tr.children[7].innerText.toLowerCase();
-        const usuario = tr.children[8].innerText.toLowerCase();
+        const paciente = tr.children[9].innerText.toLowerCase();
+        const usuario = tr.children[10].innerText.toLowerCase();
         const correspondeMes = !mes || data.startsWith(mes);
         const correspondeBusca = !busca || categoria.includes(busca) || paciente.includes(busca) || usuario.includes(busca);
         tr.style.display = (correspondeMes && correspondeBusca) ? '' : 'none';
