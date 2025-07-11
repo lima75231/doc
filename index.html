@@ -65,11 +65,14 @@
       width: 100%;
       border-collapse: collapse;
       margin-top: 30px;
+      font-size: 14px;
     }
     th, td {
       border: 1px solid #ddd;
-      padding: 10px;
+      padding: 6px 8px;
       text-align: left;
+      word-wrap: break-word;
+      white-space: normal;
     }
     th {
       background-color: #f0f4f8;
@@ -116,9 +119,9 @@
 
   <div id="app" style="display: none;">
     <header>
-      <h1>Controle Financeiro - Entidade de Saúde (CEBAS)</h1>
-      <span id="usuarioAtual" style="position: absolute; right: 100px; top: 25px; font-weight: 500;"></span>
-      <button onclick="logout()" style="position: absolute; top: 20px; right: 20px;">Sair</button>
+      <h1 style="margin: 0;">CUSTOS DE CAMPANHA</h1>
+  <span id="usuarioAtual" style="position: absolute; right: 140px; top: 25px; font-weight: 500;"></span>
+  <button onclick="logout()" style="position: absolute; top: 20px; right: 20px;">Sair</button>
     </header>
     <main>
       <form id="form">
