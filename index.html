@@ -79,62 +79,119 @@
       font-size: 14px;
       margin-top: 40px;
     }
+    #loginContainer {
+      max-width: 400px;
+      margin: 100px auto;
+      padding: 30px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    #loginContainer h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    #filterBar {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    #filterBar select, #filterBar input {
+      padding: 8px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Controle Financeiro - Entidade de Saúde (CEBAS)</h1>
-  </header>
-  <main>
-    <form id="form">
-      <label>Data:<input type="date" id="data" required></label>
-      <label>Tipo:
-        <select id="tipo">
-          <option value="Receita">Receita</option>
-          <option value="Despesa">Despesa</option>
-        </select>
-      </label>
-      <label>Categoria:<input type="text" id="categoria" required></label>
-      <label>Descrição:<input type="text" id="descricao" required></label>
-      <label>Valor:<input type="number" id="valor" step="0.01" required></label>
-      <label>Origem do recurso:
-        <select id="origem">
-          <option value="Próprio">Próprio</option>
-          <option value="Convênio">Convênio</option>
-          <option value="Doação">Doação</option>
-          <option value="Outro">Outro</option>
-        </select>
-      </label>
-      <label>Tipo de Atendimento:
-        <select id="atendimento">
-          <option value="Pago">Pago</option>
-          <option value="Gratuito">Gratuito</option>
-        </select>
-      </label>
-      <label>Paciente/Beneficiário:<input type="text" id="paciente"></label>
-      <div style="flex: 1 1 100%;">
-        <button type="submit">Adicionar Lançamento</button>
-      </div>
-    </form>
+  <div id="loginContainer">
+    <h2>Acesso ao Sistema</h2>
+    <label>Usuário:<input type="text" id="loginUser"></label>
+    <label>Senha:<input type="password" id="loginPass"></label>
+    <button onclick="login()">Entrar</button>
+  </div>
 
-    <h2>Lançamentos</h2>
-    <table id="tabela">
-      <thead>
-        <tr>
-          <th>Data</th><th>Tipo</th><th>Categoria</th><th>Descrição</th>
-          <th>Valor</th><th>Origem</th><th>Atendimento</th><th>Paciente</th><th>Ação</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </main>
-  <div class="footer">
-    Desenvolvido para controle de entidades de saúde com foco em gratuidade e CEBAS.
+  <div id="app" style="display: none;">
+    <header>
+      <h1>Controle Financeiro - Entidade de Saúde (CEBAS)</h1>
+      <button onclick="logout()" style="position: absolute; top: 20px; right: 20px;">Sair</button>
+    </header>
+    <main>
+      <form id="form">
+        <label>Data:<input type="date" id="data" required></label>
+        <label>Tipo:
+          <select id="tipo">
+            <option value="Receita">Receita</option>
+            <option value="Despesa">Despesa</option>
+          </select>
+        </label>
+        <label>Categoria:<input type="text" id="categoria" required></label>
+        <label>Descrição:<input type="text" id="descricao" required></label>
+        <label>Valor:<input type="number" id="valor" step="0.01" required></label>
+        <label>Origem do recurso:
+          <select id="origem">
+            <option value="Próprio">Próprio</option>
+            <option value="Convênio">Convênio</option>
+            <option value="Doação">Doação</option>
+            <option value="Outro">Outro</option>
+          </select>
+        </label>
+        <label>Tipo de Atendimento:
+          <select id="atendimento">
+            <option value="Pago">Pago</option>
+            <option value="Gratuito">Gratuito</option>
+          </select>
+        </label>
+        <label>Paciente/Beneficiário:<input type="text" id="paciente"></label>
+        <div style="flex: 1 1 100%;">
+          <button type="submit">Adicionar Lançamento</button>
+        </div>
+      </form>
+
+      <div id="filterBar">
+        <label>Mês:<select id="filtroMes"></select></label>
+        <label><input type="text" id="filtroBusca" placeholder="Buscar por categoria ou paciente"></label>
+      </div>
+
+      <h2>Lançamentos</h2>
+      <table id="tabela">
+        <thead>
+          <tr>
+            <th>Data</th><th>Tipo</th><th>Categoria</th><th>Descrição</th>
+            <th>Valor</th><th>Origem</th><th>Atendimento</th><th>Paciente</th><th>Ação</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </main>
+    <div class="footer">
+      Desenvolvido para controle de entidades de saúde com foco em gratuidade e CEBAS.
+    </div>
   </div>
 
   <script>
     const form = document.getElementById('form');
     const tabela = document.querySelector('#tabela tbody');
+    const filtroMes = document.getElementById('filtroMes');
+    const filtroBusca = document.getElementById('filtroBusca');
+
+    function login() {
+      const user = document.getElementById('loginUser').value;
+      const pass = document.getElementById('loginPass').value;
+      if (user === 'admin' && pass === '1234') {
+        document.getElementById('loginContainer').style.display = 'none';
+        document.getElementById('app').style.display = 'block';
+      } else {
+        alert('Usuário ou senha inválidos.');
+      }
+    }
+
+    function logout() {
+      document.getElementById('loginContainer').style.display = 'block';
+      document.getElementById('app').style.display = 'none';
+    }
 
     function salvarLocal() {
       localStorage.setItem('lancamentosCEBAS', tabela.innerHTML);
@@ -143,11 +200,13 @@
     function carregarLocal() {
       const dados = localStorage.getItem('lancamentosCEBAS');
       if (dados) tabela.innerHTML = dados;
+      atualizarFiltroMes();
     }
 
     function removerLinha(btn) {
       btn.parentElement.parentElement.remove();
       salvarLocal();
+      atualizarFiltroMes();
     }
 
     form.addEventListener('submit', function(e) {
@@ -167,7 +226,39 @@
       tabela.appendChild(novaLinha);
       form.reset();
       salvarLocal();
+      atualizarFiltroMes();
     });
+
+    filtroBusca.addEventListener('input', filtrarTabela);
+    filtroMes.addEventListener('change', filtrarTabela);
+
+    function atualizarFiltroMes() {
+      const meses = new Set();
+      document.querySelectorAll('#tabela tbody tr').forEach(tr => {
+        const data = tr.children[0].innerText;
+        if (data) meses.add(data.slice(0,7));
+      });
+      filtroMes.innerHTML = '<option value="">Todos</option>';
+      [...meses].sort().forEach(m => {
+        const opt = document.createElement('option');
+        opt.value = m;
+        opt.textContent = m;
+        filtroMes.appendChild(opt);
+      });
+    }
+
+    function filtrarTabela() {
+      const busca = filtroBusca.value.toLowerCase();
+      const mes = filtroMes.value;
+      document.querySelectorAll('#tabela tbody tr').forEach(tr => {
+        const data = tr.children[0].innerText;
+        const categoria = tr.children[2].innerText.toLowerCase();
+        const paciente = tr.children[7].innerText.toLowerCase();
+        const correspondeMes = !mes || data.startsWith(mes);
+        const correspondeBusca = !busca || categoria.includes(busca) || paciente.includes(busca);
+        tr.style.display = (correspondeMes && correspondeBusca) ? '' : 'none';
+      });
+    }
 
     carregarLocal();
   </script>
