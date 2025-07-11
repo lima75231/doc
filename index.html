@@ -18,6 +18,7 @@
       color: white;
       text-align: center;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      position: relative;
     }
     main {
       max-width: 1000px;
@@ -116,6 +117,7 @@
   <div id="app" style="display: none;">
     <header>
       <h1>Controle Financeiro - Entidade de Saúde (CEBAS)</h1>
+      <span id="usuarioAtual" style="position: absolute; right: 100px; top: 25px; font-weight: 500;"></span>
       <button onclick="logout()" style="position: absolute; top: 20px; right: 20px;">Sair</button>
     </header>
     <main>
@@ -152,7 +154,7 @@
 
       <div id="filterBar">
         <label>Mês:<select id="filtroMes"></select></label>
-        <label><input type="text" id="filtroBusca" placeholder="Buscar por categoria ou paciente"></label>
+        <label><input type="text" id="filtroBusca" placeholder="Buscar por categoria, paciente ou usuário"></label>
       </div>
 
       <h2>Lançamentos</h2>
@@ -160,7 +162,7 @@
         <thead>
           <tr>
             <th>Data</th><th>Tipo</th><th>Categoria</th><th>Descrição</th>
-            <th>Valor</th><th>Origem</th><th>Atendimento</th><th>Paciente</th><th>Ação</th>
+            <th>Valor</th><th>Origem</th><th>Atendimento</th><th>Paciente</th><th>Usuário</th><th>Ação</th>
           </tr>
         </thead>
         <tbody></tbody>
@@ -172,15 +174,20 @@
   </div>
 
   <script>
-    const form = document.getElementById('form');
-    const tabela = document.querySelector('#tabela tbody');
-    const filtroMes = document.getElementById('filtroMes');
-    const filtroBusca = document.getElementById('filtroBusca');
+    const usuarios = {
+      admin: '1234',
+      joao: 'joao123',
+      maria: 'maria123'
+    };
+
+    let usuarioLogado = '';
 
     function login() {
       const user = document.getElementById('loginUser').value;
       const pass = document.getElementById('loginPass').value;
-      if (user === 'admin' && pass === '1234') {
+      if (usuarios[user] && usuarios[user] === pass) {
+        usuarioLogado = user;
+        document.getElementById('usuarioAtual').innerText = `Usuário: ${user}`;
         document.getElementById('loginContainer').style.display = 'none';
         document.getElementById('app').style.display = 'block';
       } else {
@@ -189,9 +196,15 @@
     }
 
     function logout() {
+      usuarioLogado = '';
       document.getElementById('loginContainer').style.display = 'block';
       document.getElementById('app').style.display = 'none';
     }
+
+    const form = document.getElementById('form');
+    const tabela = document.querySelector('#tabela tbody');
+    const filtroMes = document.getElementById('filtroMes');
+    const filtroBusca = document.getElementById('filtroBusca');
 
     function salvarLocal() {
       localStorage.setItem('lancamentosCEBAS', tabela.innerHTML);
@@ -221,6 +234,7 @@
         <td>${origem.value}</td>
         <td>${atendimento.value}</td>
         <td>${paciente.value}</td>
+        <td>${usuarioLogado}</td>
         <td><button onclick="removerLinha(this)">Excluir</button></td>
       `;
       tabela.appendChild(novaLinha);
@@ -254,8 +268,9 @@
         const data = tr.children[0].innerText;
         const categoria = tr.children[2].innerText.toLowerCase();
         const paciente = tr.children[7].innerText.toLowerCase();
+        const usuario = tr.children[8].innerText.toLowerCase();
         const correspondeMes = !mes || data.startsWith(mes);
-        const correspondeBusca = !busca || categoria.includes(busca) || paciente.includes(busca);
+        const correspondeBusca = !busca || categoria.includes(busca) || paciente.includes(busca) || usuario.includes(busca);
         tr.style.display = (correspondeMes && correspondeBusca) ? '' : 'none';
       });
     }
